@@ -1,3 +1,4 @@
 # OpenAIClient
 
-A description of this package.
+Swift client for OpenAI
+
