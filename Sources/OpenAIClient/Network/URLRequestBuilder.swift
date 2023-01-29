@@ -33,6 +33,7 @@ struct URLRequestBuilder {
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-type")
         request.httpBody = try? encoder.encode(body)
+        request.timeoutInterval = 120
         return request
     }
 }
