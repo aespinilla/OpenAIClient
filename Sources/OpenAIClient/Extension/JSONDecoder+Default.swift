@@ -10,7 +10,7 @@ import Foundation
 extension JSONDecoder {
     static var `default`: JSONDecoder {
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .millisecondsSince1970
+        decoder.dateDecodingStrategy = .secondsSince1970
         return decoder
     }
 }
