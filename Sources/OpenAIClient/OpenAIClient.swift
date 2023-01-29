@@ -25,6 +25,7 @@ public extension OpenAIClient {
 #if canImport(Combine)
 import Combine
 
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 public extension OpenAIClient {
     func completion(request: CompletionRequest, version: Version = .v1) -> AnyPublisher<Completion, OpenAIError> {
         httpClient.request(endpoint: .completion(version: version), body: request)

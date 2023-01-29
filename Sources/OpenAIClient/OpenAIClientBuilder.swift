@@ -9,7 +9,7 @@ import Foundation
 
 public enum OpenAIClientBuilder {
     public static func build(authToken: String) -> OpenAIClient {
-        let urlRequestBuilder = URLRequestBuilder(token: authToken)
+        let urlRequestBuilder = URLRequestBuilderImpl(token: authToken)
         let httpClient = HTTPClient(urlRequestBuilder: urlRequestBuilder)
         return .init(httpClient: httpClient)
     }

@@ -7,7 +7,11 @@
 
 import Foundation
 
-struct URLRequestBuilder {
+protocol URLRequestBuilder {
+    func build<T: Encodable>(endpoint: Endpoint, body: T) -> URLRequest? 
+}
+
+struct URLRequestBuilderImpl: URLRequestBuilder {
     private let openAIURL: OpenAIURL
     private let encoder: JSONEncoder
     private let token: String

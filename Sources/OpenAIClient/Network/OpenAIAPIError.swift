@@ -1,5 +1,5 @@
 //
-//  OpenAIError.swift
+//  OpenAIAPIError.swift
 //  
 //
 //  Created by Alberto Espinilla Garrido on 29/1/23.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum OpenAIError: Swift.Error {
+enum OpenAIAPIError: Swift.Error, Equatable {
     case noData
     case urlError
     case decode
