@@ -1,7 +1,7 @@
 import Foundation
 
 public struct OpenAIClient {
-    internal let httpClient: HTTPClient
+    private let httpClient: HTTPClient
 
     init(httpClient: HTTPClient) {
         self.httpClient = httpClient
@@ -20,6 +20,13 @@ public extension OpenAIClient {
     func image(request: ImageCreateRequest, version: Version = .v1, completion: @escaping (Result<Completion, OpenAIError>) -> Void) {
         httpClient.request(endpoint: .image(version: version), body: request, completion: completion)
     }
+    
+#if canImport(UIKit)
+    func singleImage(prompt: String, size: ImageCreateRequest.Size = .s1024, completion: @escaping (UIImage?) -> Void) {
+        let request = ImageCreateRequest(prompt: prompt, size: size, outputType: .base64)
+        image(request: request, completion: { completion($0.data.first?.image) })
+    }
+#endif
 }
 
 #if canImport(Combine)
@@ -38,5 +45,15 @@ public extension OpenAIClient {
     func image(request: ImageCreateRequest, version: Version = .v1) -> AnyPublisher<Image, OpenAIError> {
         httpClient.request(endpoint: .image(version: version), body: request)
     }
+    
+#if canImport(UIKit)
+    func singleImage(prompt: String, size: ImageCreateRequest.Size = .s1024) -> AnyPublisher<UIImage?, Never> {
+        let request = ImageCreateRequest(prompt: prompt, size: size, outputType: .base64)
+        return image(request: request)
+            .mapError({ _ in return nil })
+            .map({ $0.data.first?.image })
+            .eraseToAnyPublisher()
+    }
+#endif
 }
 #endif
