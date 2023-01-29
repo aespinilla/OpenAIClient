@@ -8,7 +8,6 @@ let package = Package(
     platforms: [.macOS(.v10_15), .iOS(.v13), .tvOS(.v13), .watchOS(.v9)],
     products: [
         .library(name: "OpenAIClient", targets: ["OpenAIClient"]),
-        .library(name: "OpenAIClientCombine", targets: ["OpenAIClientCombine"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -20,11 +19,8 @@ let package = Package(
         .target(
             name: "OpenAIClient",
             dependencies: []),
-        .target(
-            name: "OpenAIClientCombine",
-            dependencies: ["OpenAIClient"]),
         .testTarget(
             name: "OpenAIClientTests",
-            dependencies: ["OpenAIClient", "OpenAIClientCombine"]),
+            dependencies: ["OpenAIClient"]),
     ]
 )

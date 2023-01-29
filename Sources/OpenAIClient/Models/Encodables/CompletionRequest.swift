@@ -18,7 +18,7 @@ public struct CompletionRequest: Encodable {
         case maxTokens = "max_tokens"
     }
     
-    public init(prompt: String, model: OpenAIModelType = .gpt3(.davinci), maxTokens: Int = 16) {
+    public init(prompt: String, model: OpenAIModelType = .gpt3(.davinci), maxTokens: Int = 3000) {
         self.prompt = prompt
         self.model = model
         self.maxTokens = maxTokens

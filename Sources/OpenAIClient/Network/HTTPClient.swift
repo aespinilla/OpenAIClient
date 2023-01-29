@@ -7,7 +7,7 @@
 
 import Foundation
 
-internal struct HTTPClient {
+struct HTTPClient {
     private let urlSession: URLSession
     private let urlRequestBuilder: URLRequestBuilder
     private let decoder: JSONDecoder
@@ -46,3 +46,22 @@ extension HTTPClient {
         task.resume()
     }
 }
+
+#if canImport(Combine)
+import Combine
+
+extension HTTPClient {
+    func request<Input: Encodable, Output: Decodable>(endpoint: Endpoint, body: Input) -> AnyPublisher<Output, OpenAIError> {
+        guard let urlRequest = urlRequestBuilder.build(endpoint: endpoint, body: body) else {
+            return Fail(error: .request).eraseToAnyPublisher()
+        }
+        
+        return urlSession.dataTaskPublisher(for: urlRequest)
+            .mapError({ OpenAIError.urlError($0) })
+            .compactMap({ $0.data })
+            .decode(type: Output.self, decoder: decoder)
+            .mapError({ OpenAIError.decode($0) })
+            .eraseToAnyPublisher()
+    }
+}
+#endif

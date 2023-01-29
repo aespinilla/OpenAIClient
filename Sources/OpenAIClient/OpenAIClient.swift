@@ -21,3 +21,21 @@ public extension OpenAIClient {
         httpClient.request(endpoint: .image(version: version), body: request, completion: completion)
     }
 }
+
+#if canImport(Combine)
+import Combine
+
+public extension OpenAIClient {
+    func completion(request: CompletionRequest, version: Version = .v1) -> AnyPublisher<Completion, OpenAIError> {
+        httpClient.request(endpoint: .completion(version: version), body: request)
+    }
+    
+    func edits(request: EditRequest, version: Version = .v1) -> AnyPublisher<Edit, OpenAIError> {
+        httpClient.request(endpoint: .edit(version: version), body: request)
+    }
+    
+    func image(request: ImageCreateRequest, version: Version = .v1) -> AnyPublisher<Image, OpenAIError> {
+        httpClient.request(endpoint: .image(version: version), body: request)
+    }
+}
+#endif
