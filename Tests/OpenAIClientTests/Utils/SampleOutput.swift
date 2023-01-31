@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct SampleOutput: Codable, Equatable {
+struct SampleOutput: Decodable, Equatable {
     var foo = "bar"
 }

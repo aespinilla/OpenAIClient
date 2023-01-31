@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Usage: Decodable {
+public struct Usage: Decodable, Equatable {
     public let promptTokens: Int
     public let completionTokens: Int
     public let totalTokens: Int

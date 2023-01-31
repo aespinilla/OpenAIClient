@@ -17,7 +17,7 @@ final class HTTPClientTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = .init()
 
     override func setUpWithError() throws {
-        sut = HTTPClient(urlSession: URLSessionMockFactory.default, urlRequestBuilder: urlRequestBuilderMock)
+        sut = HTTPClientImpl(urlSession: URLSessionMockFactory.default, urlRequestBuilder: urlRequestBuilderMock)
     }
 
     override func tearDownWithError() throws {
@@ -31,7 +31,7 @@ final class HTTPClientTests: XCTestCase {
         urlRequestBuilderMock.urlRequestMock = URLRequest(url: url)
         URLSessionMock.response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
         let sampleOutput = SampleOutput()
-        URLSessionMock.data = sampleOutput.data()
+        URLSessionMock.data = getSampleOutputData()
         let body = SampleBody()
         let expectation = expectation(description: #function)
         var output: Result<SampleOutput, OpenAIError>?
@@ -46,7 +46,7 @@ final class HTTPClientTests: XCTestCase {
         urlRequestBuilderMock.urlRequestMock = URLRequest(url: url)
         URLSessionMock.response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
         let sampleOutput = SampleOutput()
-        URLSessionMock.data = sampleOutput.data()
+        URLSessionMock.data = getSampleOutputData()
         let body = SampleBody()
         let expectation = expectation(description: #function)
         var output: SampleOutput?
@@ -55,5 +55,15 @@ final class HTTPClientTests: XCTestCase {
             .store(in: &cancellables)
         wait(for: [expectation], timeout: 1.0)
         XCTAssertEqual(try XCTUnwrap(output), sampleOutput)
+    }
+}
+
+private extension HTTPClientTests {
+    func getSampleOutputData() -> Data? {
+        let text = """
+            { "foo": "bar" }
+        """
+        
+        return text.data(using: .utf8)
     }
 }

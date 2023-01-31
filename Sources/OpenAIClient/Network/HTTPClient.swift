@@ -7,7 +7,14 @@
 
 import Foundation
 
-struct HTTPClient {
+protocol HTTPClient {
+    func request<Input: Encodable, Output: Decodable>(endpoint: Endpoint, body: Input, completion: @escaping (Result<Output, OpenAIError>) -> Void)
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    func request<Input: Encodable, Output: Decodable>(endpoint: Endpoint, body: Input) -> AnyPublisher<Output, OpenAIError>
+}
+
+struct HTTPClientImpl: HTTPClient {
     private let urlSession: URLSession
     private let urlRequestBuilder: URLRequestBuilder
     private let decoder: JSONDecoder
@@ -19,7 +26,7 @@ struct HTTPClient {
     }
 }
 
-extension HTTPClient {
+extension HTTPClientImpl {
     func request<Input: Encodable, Output: Decodable>(endpoint: Endpoint, body: Input, completion: @escaping (Result<Output, OpenAIError>) -> Void) {
         guard let urlRequest = urlRequestBuilder.build(endpoint: endpoint, body: body) else {
             return completion(.failure(.urlError))
@@ -51,7 +58,9 @@ extension HTTPClient {
 import Combine
 
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-extension HTTPClient {
+extension HTTPClientImpl {
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     func request<Input: Encodable, Output: Decodable>(endpoint: Endpoint, body: Input) -> AnyPublisher<Output, OpenAIError> {
         guard let urlRequest = urlRequestBuilder.build(endpoint: endpoint, body: body) else {
             return Fail(error: .urlError).eraseToAnyPublisher()

@@ -2,7 +2,7 @@ import Foundation
 
 public struct OpenAIClient {
     private let httpClient: HTTPClient
-
+    
     init(httpClient: HTTPClient) {
         self.httpClient = httpClient
     }
@@ -34,14 +34,18 @@ import Combine
 
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 public extension OpenAIClient {
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     func completion(request: CompletionRequest, version: Version = .v1) -> AnyPublisher<Completion, OpenAIError> {
         httpClient.request(endpoint: .completion(version: version), body: request)
     }
     
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     func edits(request: EditRequest, version: Version = .v1) -> AnyPublisher<Edit, OpenAIError> {
         httpClient.request(endpoint: .edit(version: version), body: request)
     }
     
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     func image(request: ImageCreateRequest, version: Version = .v1) -> AnyPublisher<Image, OpenAIError> {
         httpClient.request(endpoint: .image(version: version), body: request)
     }
@@ -57,3 +61,43 @@ public extension OpenAIClient {
 #endif
 }
 #endif
+
+public extension OpenAIClient {
+    @available(swift 5.5)
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    func completion(request: CompletionRequest, version: Version = .v1) async throws -> Completion {
+        try await withCheckedThrowingContinuation({ continuation in
+            httpClient.request(endpoint: .completion(version: version),
+                               body: request,
+                               completion: { continuation.resume(with: $0) })
+        })
+    }
+    
+    @available(swift 5.5)
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    func edits(request: EditRequest, version: Version = .v1) async throws -> Edit {
+        try await withCheckedThrowingContinuation({ continuation in
+            httpClient.request(endpoint: .edit(version: version),
+                               body: request,
+                               completion: { continuation.resume(with: $0) })
+        })
+    }
+    
+    @available(swift 5.5)
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    func image(request: ImageCreateRequest, version: Version = .v1) async throws -> Image {
+        try await withCheckedThrowingContinuation({ continuation in
+            httpClient.request(endpoint: .image(version: version),
+                               body: request,
+                               completion: { continuation.resume(with: $0) })
+        })
+    }
+    
+#if canImport(UIKit)
+    func singleImage(prompt: String, size: ImageCreateRequest.Size = .s1024) async -> UIImage? {
+        let request = ImageCreateRequest(prompt: prompt, size: size, outputType: .base64)
+        let image = try? await image(request: request)
+        return image?.data.first?.image
+    }
+#endif
+}

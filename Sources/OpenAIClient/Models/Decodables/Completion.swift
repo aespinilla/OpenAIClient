@@ -7,8 +7,8 @@
 
 import Foundation
 
-public struct Completion: Decodable {
-    public struct Choice: Decodable {
+public struct Completion: Decodable, Equatable {
+    public struct Choice: Decodable, Equatable {
         public let text: String
         public let index: Int
         public let finishReason: String?
