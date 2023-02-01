@@ -11,13 +11,10 @@ final class OpenAIClientTests: XCTestCase {
         sut = nil
     }
     
+    // MARK: - Completion
+    
     func testGivenPromptWhenCompletionWithCallbackThenMatch() throws {
-        let completion = Completion(id: "",
-                                    object: "",
-                                    created: Date(),
-                                    model: "",
-                                    choices: [],
-                                    usage: .init(promptTokens: 0, completionTokens: 0, totalTokens: 0))
+        let completion = CompletionBuilder().build()
         let httpClientMock: HTTPClientMock<Completion> = initialize()
         httpClientMock.resultMock = .success(completion)
         let request = CompletionRequest(prompt: "lorem ipsum")
@@ -30,12 +27,7 @@ final class OpenAIClientTests: XCTestCase {
     }
     
     func testGivenPromptWhenCompletionWithPublisherThenMatch() throws {
-        let completion = Completion(id: "",
-                                    object: "",
-                                    created: Date(),
-                                    model: "",
-                                    choices: [],
-                                    usage: .init(promptTokens: 0, completionTokens: 0, totalTokens: 0))
+        let completion = CompletionBuilder().build()
         let httpClientMock: HTTPClientMock<Completion> = initialize()
         httpClientMock.publisherMock = CurrentValueSubject(completion).eraseToAnyPublisher()
         let request = CompletionRequest(prompt: "lorem ipsum")
@@ -51,17 +43,94 @@ final class OpenAIClientTests: XCTestCase {
     }
     
     func testGivenPromptWhenCompletionWithAsyncThenMatch() async throws {
-        let completion = Completion(id: "",
-                                    object: "",
-                                    created: Date(),
-                                    model: "",
-                                    choices: [],
-                                    usage: .init(promptTokens: 0, completionTokens: 0, totalTokens: 0))
+        let completion = CompletionBuilder().build()
         let httpClientMock: HTTPClientMock<Completion> = initialize()
         httpClientMock.resultMock = .success(completion)
         let request = CompletionRequest(prompt: "lorem ipsum")
         let output = try? await sut.completion(request: request)
         XCTAssertEqual(try XCTUnwrap(output), completion)
+        XCTAssertEqual(httpClientMock.requestTimes, 1)
+    }
+    
+    // MARK: - Edits
+    
+    func testGivenEditRequestWhenEditWithCallbackThenMatch() throws {
+        let edit = EditBuilder().build()
+        let httpClientMock: HTTPClientMock<Edit> = initialize()
+        httpClientMock.resultMock = .success(edit)
+        let request = EditRequest(instruction: "lorem ipsum")
+        let expectation = expectation(description: #function)
+        var output: Result<Edit, OpenAIError>?
+        sut.edits(request: request, completion: { output = $0; expectation.fulfill() })
+        wait(for: [expectation], timeout: 1.0)
+        XCTAssertEqual(try XCTUnwrap(output), .success(edit))
+        XCTAssertEqual(httpClientMock.requestTimes, 1)
+    }
+    
+    func testGivenEditRequestWhenEditWithPublisherThenMatch() throws {
+        let edit = EditBuilder().build()
+        let httpClientMock: HTTPClientMock<Edit> = initialize()
+        httpClientMock.publisherMock = CurrentValueSubject(edit).eraseToAnyPublisher()
+        let request = EditRequest(instruction: "lorem ipsum")
+        let expectation = expectation(description: #function)
+        var output: Edit?
+        sut.edits(request: request)
+            .sink(receiveCompletion: { _ in }, receiveValue: { output = $0; expectation.fulfill() })
+            .store(in: &cancellables)
+        
+        wait(for: [expectation], timeout: 1.0)
+        XCTAssertEqual(try XCTUnwrap(output), edit)
+        XCTAssertEqual(httpClientMock.requestPublisherTimes, 1)
+    }
+    
+    func testGivenEditRequestWhenEditWithAsyncThenMatch() async throws {
+        let edit = EditBuilder().build()
+        let httpClientMock: HTTPClientMock<Edit> = initialize()
+        httpClientMock.resultMock = .success(edit)
+        let request = EditRequest(instruction: "lorem ipsum")
+        let output = try? await sut.edits(request: request)
+        XCTAssertEqual(try XCTUnwrap(output), edit)
+        XCTAssertEqual(httpClientMock.requestTimes, 1)
+    }
+    
+    // MARK: - Images
+    
+    func testGivenPromptWhenImageCreatedWithCallbackThenMatch() throws {
+        let image = ImageBuilder().build()
+        let httpClientMock: HTTPClientMock<Image> = initialize()
+        httpClientMock.resultMock = .success(image)
+        let request = ImageCreateRequest(prompt: "lorem ipsum")
+        let expectation = expectation(description: #function)
+        var output: Result<Image, OpenAIError>?
+        sut.image(request: request, completion: { output = $0; expectation.fulfill() })
+        wait(for: [expectation], timeout: 1.0)
+        XCTAssertEqual(try XCTUnwrap(output), .success(image))
+        XCTAssertEqual(httpClientMock.requestTimes, 1)
+    }
+    
+    func testGivenPromptWhenImageCreateWithPublisherThenMatch() throws {
+        let image = ImageBuilder().build()
+        let httpClientMock: HTTPClientMock<Image> = initialize()
+        httpClientMock.publisherMock = CurrentValueSubject(image).eraseToAnyPublisher()
+        let request = ImageCreateRequest(prompt: "lorem ipsum")
+        let expectation = expectation(description: #function)
+        var output: Image?
+        sut.image(request: request)
+            .sink(receiveCompletion: { _ in }, receiveValue: { output = $0; expectation.fulfill() })
+            .store(in: &cancellables)
+        
+        wait(for: [expectation], timeout: 1.0)
+        XCTAssertEqual(try XCTUnwrap(output), image)
+        XCTAssertEqual(httpClientMock.requestPublisherTimes, 1)
+    }
+    
+    func testGivenPromptWhenImageCreateWithAsyncThenMatch() async throws {
+        let image = ImageBuilder().build()
+        let httpClientMock: HTTPClientMock<Image> = initialize()
+        httpClientMock.resultMock = .success(image)
+        let request = ImageCreateRequest(prompt: "lorem ipsum")
+        let output = try? await sut.image(request: request)
+        XCTAssertEqual(try XCTUnwrap(output), image)
         XCTAssertEqual(httpClientMock.requestTimes, 1)
     }
 }

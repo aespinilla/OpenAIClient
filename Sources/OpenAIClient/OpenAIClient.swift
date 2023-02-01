@@ -13,11 +13,11 @@ public extension OpenAIClient {
         httpClient.request(endpoint: .completion(version: version), body: request, completion: completion)
     }
     
-    func edits(request: EditRequest, version: Version = .v1, completion: @escaping (Result<Completion, OpenAIError>) -> Void) {
+    func edits(request: EditRequest, version: Version = .v1, completion: @escaping (Result<Edit, OpenAIError>) -> Void) {
         httpClient.request(endpoint: .edit(version: version), body: request, completion: completion)
     }
     
-    func image(request: ImageCreateRequest, version: Version = .v1, completion: @escaping (Result<Completion, OpenAIError>) -> Void) {
+    func image(request: ImageCreateRequest, version: Version = .v1, completion: @escaping (Result<Image, OpenAIError>) -> Void) {
         httpClient.request(endpoint: .image(version: version), body: request, completion: completion)
     }
     

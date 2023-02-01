@@ -7,8 +7,8 @@
 
 import Foundation
 
-public struct Image: Decodable {
-    public struct Data: Decodable {
+public struct Image: Decodable, Equatable {
+    public struct Data: Decodable, Equatable {
         let url: String?
         let base64: String?
         

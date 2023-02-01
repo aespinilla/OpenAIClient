@@ -9,9 +9,16 @@ import Foundation
 @testable import OpenAIClient
 
 class OpenAIURLMock: OpenAIURL {
-    private(set) var url: String
+    private(set) var urlTimes: Int = 0
+    var mockUrl: String = ""
     
-    init(url: String = "https://fake.url") {
-        self.url = url
+    var url: String {
+        urlTimes += 1
+        return mockUrl
+    }
+    
+    func reset() {
+        urlTimes = 0
+        mockUrl = ""
     }
 }

@@ -23,7 +23,7 @@ struct URLRequestBuilderImpl: URLRequestBuilder {
     }
     
     func build<T: Encodable>(endpoint: Endpoint, body: T) -> URLRequest? {
-        guard let url = URL(string: openAIURL.url + endpoint.path)
+        guard let url = URL(string: openAIURL.url)
         else { return nil }
         
         var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)
