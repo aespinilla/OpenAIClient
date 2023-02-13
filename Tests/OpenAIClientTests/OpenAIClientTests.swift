@@ -133,6 +133,47 @@ final class OpenAIClientTests: XCTestCase {
         XCTAssertEqual(try XCTUnwrap(output), image)
         XCTAssertEqual(httpClientMock.requestTimes, 1)
     }
+    
+    // MARK: - Moderations
+    
+    func testGivenInputWhenModerationsWithCallbackThenMatch() throws {
+        let moderation = ModerationBuilder().build()
+        let httpClientMock: HTTPClientMock<Moderation> = initialize()
+        httpClientMock.resultMock = .success(moderation)
+        let request = ModerationRequest(input: "lorem ipsum some body text")
+        let expectation = expectation(description: #function)
+        var output: Result<Moderation, OpenAIError>?
+        sut.moderations(request: request, completion: { output = $0; expectation.fulfill() })
+        wait(for: [expectation], timeout: 1)
+        XCTAssertEqual(try XCTUnwrap(output), .success(moderation))
+        XCTAssertEqual(httpClientMock.requestTimes, 1)
+    }
+    
+    func testGivenInputWhenModerationsWithPublisherThenMatch() throws {
+        let moderation = ModerationBuilder().build()
+        let httpClientMock: HTTPClientMock<Moderation> = initialize()
+        httpClientMock.publisherMock = CurrentValueSubject(moderation).eraseToAnyPublisher()
+        let request = ModerationRequest(input: "lorem ipsum some body text")
+        let expectation = expectation(description: #function)
+        var output: Moderation?
+        sut.moderations(request: request)
+            .sink(receiveCompletion: { _ in }, receiveValue: { output = $0; expectation.fulfill() })
+            .store(in: &cancellables)
+        
+        wait(for: [expectation], timeout: 1.0)
+        XCTAssertEqual(try XCTUnwrap(output), moderation)
+        XCTAssertEqual(httpClientMock.requestPublisherTimes, 1)
+    }
+    
+    func testGivenInputWhenModerationsWithAsyncThenMatch() async throws {
+        let moderation = ModerationBuilder().build()
+        let httpClientMock: HTTPClientMock<Moderation> = initialize()
+        httpClientMock.resultMock = .success(moderation)
+        let request = ModerationRequest(input: "lorem ipsum some body text")
+        let output = try? await sut.moderations(request: request)
+        XCTAssertEqual(try XCTUnwrap(output), moderation)
+        XCTAssertEqual(httpClientMock.requestTimes, 1)
+    }
 }
 
 private extension OpenAIClientTests {

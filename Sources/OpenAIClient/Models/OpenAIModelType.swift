@@ -19,11 +19,15 @@ public enum OpenAIModelType {
     /// ``Feature``Family of Models
     case feature(Feature)
     
+    /// ``Moderations`` Family of Models
+    case moderations(Moderation)
+    
     public var modelName: String {
         switch self {
         case .gpt3(let model): return model.rawValue
         case .codex(let model): return model.rawValue
         case .feature(let model): return model.rawValue
+        case .moderations(let model): return model.rawValue
         }
     }
     
@@ -80,5 +84,19 @@ public enum OpenAIModelType {
         
         /// > Model Name: text-davinci-edit-001
         case davinci = "text-davinci-edit-001"
+    }
+    
+    /// A set of models that are moderations specific.
+    ///
+    ///  For example using the Moderations endpoint requires a specific data model
+    ///
+    ///  You can read the [API Docs](https://platform.openai.com/docs/api-reference/moderations/create)
+    public enum Moderation: String {
+        
+        /// > Model Name: text-moderation-latest
+        case latest = "text-moderation-latest"
+        
+        /// > Model Name: text-moderation-stable
+        case stable = "text-moderation-stable"
     }
 }

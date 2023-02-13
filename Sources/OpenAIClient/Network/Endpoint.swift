@@ -16,6 +16,7 @@ enum Endpoint {
     case completion(version: Version = .v1)
     case edit(version: Version = .v1)
     case image(version: Version = .v1)
+    case moderations(version: Version = .v1)
 }
 
 extension Endpoint {
@@ -24,6 +25,7 @@ extension Endpoint {
         case let .completion(version): return "/\(version.version)/completions"
         case let .edit(version): return "/\(version.version)/edits"
         case let .image(version): return "/\(version.version)/images/generations"
+        case let .moderations(version): return "/\(version.version)/moderations"
         }
     }
     

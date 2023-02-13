@@ -14,7 +14,8 @@ final class EndpointTests: XCTestCase {
         [
             Test(input: Endpoint.completion(), output: (path: "/v1/completions", method: "POST")),
             Test(input: Endpoint.edit(), output: (path: "/v1/edits", method: "POST")),
-            Test(input: Endpoint.image(), output: (path: "/v1/images/generations", method: "POST"))
+            Test(input: Endpoint.image(), output: (path: "/v1/images/generations", method: "POST")),
+            Test(input: Endpoint.moderations(), output: (path: "/v1/moderations", method: "POST"))
         ].forEach({
             XCTAssertEqual($0.input.path, $0.output.path)
             XCTAssertEqual($0.input.method.rawValue, $0.output.method)
@@ -26,7 +27,8 @@ final class EndpointTests: XCTestCase {
         [
             Test(input: Endpoint.completion(version: version), output: (path: "/\(version.version)/completions", method: "POST")),
             Test(input: Endpoint.edit(version: version), output: (path: "/\(version.version)/edits", method: "POST")),
-            Test(input: Endpoint.image(version: version), output: (path: "/\(version.version)/images/generations", method: "POST"))
+            Test(input: Endpoint.image(version: version), output: (path: "/\(version.version)/images/generations", method: "POST")),
+            Test(input: Endpoint.moderations(version: version), output: (path: "/\(version.version)/moderations", method: "POST"))
         ].forEach({
             XCTAssertEqual($0.input.path, $0.output.path)
             XCTAssertEqual($0.input.method.rawValue, $0.output.method)
