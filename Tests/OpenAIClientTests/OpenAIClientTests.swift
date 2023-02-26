@@ -174,38 +174,6 @@ final class OpenAIClientTests: XCTestCase {
         XCTAssertEqual(try XCTUnwrap(output), moderation)
         XCTAssertEqual(httpClientMock.requestTimes, 1)
     }
-    
-    // Stream
-    func testGivenStreamWhenCompletionThenMatch() throws {
-        let urlRequestBuilder = URLRequestBuilderImpl(token: "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")
-        let client = HTTPClientImpl(urlRequestBuilder: urlRequestBuilder)
-        sut = .init(httpClient: client)
-        let request = CompletionRequest(prompt: "Cuentame una historia de un gordo que come mierda", stream: true)
- //       let expectation = expectation(description: #function)
-//        var output: Result<Completion, OpenAIError>?
-        var output: Completion?
-        
-//        sut.completionStream(request: request)
-//            .compactMap({ $0.choices.first?.text })
-//            .sink(receiveCompletion: { _ in }, receiveValue: {
-//                print($0, terminator: "")
-//                //output = $0;
-//                //expectation.fulfill()
-//            })
-//            .store(in: &cancellables)
-        
-        //wait(for: [expectation], timeout: 10000.0)
-//        sut.completion(request: request, completion: { output = $0; expectation.fulfill() })
-//        wait(for: [expectation], timeout: 10000.0)
-//        var output: Completion?
-//        sut.completion(request: request)
-//            .sink(receiveCompletion: { _ in }, receiveValue: { output = $0; expectation.fulfill() })
-//            .store(in: &cancellables)
-//
-//        wait(for: [expectation], timeout: 10000.0)
-//        XCTAssertEqual(try XCTUnwrap(output), completion)
-//        XCTAssertEqual(httpClientMock.requestPublisherTimes, 1)
-    }
 }
 
 private extension OpenAIClientTests {
