@@ -59,6 +59,11 @@ public extension OpenAIClient {
         httpClient.request(endpoint: .moderations(version: version), body: request)
     }
     
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    func completionStream(request: CompletionRequest, version: Version = .v1) -> AnyPublisher<Completion, OpenAIError> {
+        httpClient.requestStream(endpoint: .completion(version: version), body: request.forceStream)
+    }
+    
 #if canImport(UIKit)
     func singleImage(prompt: String, size: ImageCreateRequest.Size = .s1024) -> AnyPublisher<UIImage?, Never> {
         let request = ImageCreateRequest(prompt: prompt, size: size, outputType: .base64)

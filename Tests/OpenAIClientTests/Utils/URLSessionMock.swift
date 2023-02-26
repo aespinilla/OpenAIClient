@@ -43,4 +43,10 @@ class URLSessionMock: URLProtocol {
     
     override func stopLoading() {
     }
+    
+    class func reset() {
+        data = nil
+        response = nil
+        error = nil
+    }
 }

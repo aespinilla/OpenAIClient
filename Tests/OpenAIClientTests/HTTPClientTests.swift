@@ -11,16 +11,20 @@ import Combine
 
 final class HTTPClientTests: XCTestCase {
     
+    private let urlSessionFactoryMock: URLSessionFactoryMock = .init()
     private let urlRequestBuilderMock: URLRequestBuilderMock<SampleBody> = .init()
     private var sut: HTTPClient!
     
     private var cancellables: Set<AnyCancellable> = .init()
 
     override func setUpWithError() throws {
-        sut = HTTPClientImpl(urlSession: URLSessionMockFactory.default, urlRequestBuilder: urlRequestBuilderMock)
+        urlSessionFactoryMock.urlSessionMock = URLSessionMockFactory.default
+        sut = HTTPClientImpl(urlSessionFactory: urlSessionFactoryMock, urlRequestBuilder: urlRequestBuilderMock)
     }
 
     override func tearDownWithError() throws {
+        URLSessionMock.reset()
+        urlSessionFactoryMock.reset()
         urlRequestBuilderMock.reset()
         sut = nil
     }
@@ -38,6 +42,7 @@ final class HTTPClientTests: XCTestCase {
         sut.request(endpoint: endpoint, body: body, completion: { output = $0; expectation.fulfill() })
         wait(for: [expectation], timeout: 1.0)
         XCTAssertEqual(try XCTUnwrap(output), .success(sampleOutput))
+        XCTAssertEqual(urlSessionFactoryMock.sharedTimes, 1)
     }
     
     func testGivenEndpointAndBodyWhenRequestThenMatchOutput() throws {
@@ -55,6 +60,7 @@ final class HTTPClientTests: XCTestCase {
             .store(in: &cancellables)
         wait(for: [expectation], timeout: 1.0)
         XCTAssertEqual(try XCTUnwrap(output), sampleOutput)
+        XCTAssertEqual(urlSessionFactoryMock.sharedTimes, 1)
     }
 }
 

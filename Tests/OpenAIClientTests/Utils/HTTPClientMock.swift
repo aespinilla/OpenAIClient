@@ -9,7 +9,7 @@ import Foundation
 import Combine
 @testable import OpenAIClient
 
-final class HTTPClientMock<T: Decodable>: HTTPClient {
+final class HTTPClientMock<T: Decodable>: HTTPClient {    
     private(set) var requestTimes: Int = 0
     private(set) var requestPublisherTimes: Int = 0
     private(set) var endpoint: Endpoint?
@@ -30,5 +30,9 @@ final class HTTPClientMock<T: Decodable>: HTTPClient {
         self.endpoint = endpoint
         self.body = body
         return publisherMock.compactMap({ $0 as? Output }).eraseToAnyPublisher()
+    }
+    
+    func requestStream<Input: Encodable, Output: Decodable>(endpoint: Endpoint, body: Input) -> AnyPublisher<Output, OpenAIError> {
+        Empty().eraseToAnyPublisher()
     }
 }

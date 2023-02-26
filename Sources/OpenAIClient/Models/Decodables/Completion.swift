@@ -24,5 +24,5 @@ public struct Completion: Decodable, Equatable {
     public let created: Date
     public let model: String
     public let choices: [Choice]
-    public let usage: Usage
+    public let usage: Usage?
 }
