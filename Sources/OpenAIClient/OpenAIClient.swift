@@ -72,8 +72,8 @@ public extension OpenAIClient {
     func singleImage(prompt: String, size: ImageCreateRequest.Size = .s1024) -> AnyPublisher<UIImage?, Never> {
         let request = ImageCreateRequest(prompt: prompt, size: size, outputType: .base64)
         return image(request: request)
-            .mapError({ _ in return nil })
             .map({ $0.data.first?.image })
+            .replaceError({ _ in return nil })
             .eraseToAnyPublisher()
     }
 #endif
