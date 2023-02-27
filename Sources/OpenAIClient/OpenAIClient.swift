@@ -30,10 +30,10 @@ public extension OpenAIClient {
     }
     
 #if canImport(UIKit)
-    func singleImage(prompt: String, size: ImageCreateRequest.Size = .s1024, completion: @escaping (UIImage?) -> Void) {
-        let request = ImageCreateRequest(prompt: prompt, size: size, outputType: .base64)
-        image(request: request, completion: { completion($0.data.first?.image) })
-    }
+//    func singleImage(prompt: String, size: ImageCreateRequest.Size = .s1024, completion: @escaping (UIImage?) -> Void) {
+//        let request = ImageCreateRequest(prompt: prompt, size: size, outputType: .base64)
+//        image(request: request, completion: { completion($0.data.first?.image) })
+//    }
 #endif
 }
 
