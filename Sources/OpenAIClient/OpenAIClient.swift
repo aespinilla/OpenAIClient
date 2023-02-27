@@ -1,5 +1,9 @@
 import Foundation
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 public struct OpenAIClient {
     private let httpClient: HTTPClient
     
@@ -35,10 +39,6 @@ public extension OpenAIClient {
 
 #if canImport(Combine)
 import Combine
-
-#if canImport(UIKit)
-import UIKit
-#endif
 
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 public extension OpenAIClient {
